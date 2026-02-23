@@ -93,11 +93,25 @@ export default function NodeDashboardScreen({ route, navigation }: any) {
                 onPress={() => navigation.navigate('OpenClash', { node })}
             >
                 <View>
-                    <Text style={styles.serviceName}>OpenClash Dashboard</Text>
+                    <Text style={styles.serviceName}>🌐 OpenClash Dashboard</Text>
                     <Text style={styles.serviceDesc}>Manage proxies, rules & nodes via Yacd</Text>
                 </View>
                 <Text style={styles.arrowIcon}>→</Text>
             </TouchableOpacity>
+
+            <View style={{ height: 12 }} />
+
+            <TouchableOpacity
+                style={styles.serviceItem}
+                onPress={() => navigation.navigate('OpenClashConfig', { node })}
+            >
+                <View>
+                    <Text style={styles.serviceName}>⚙️ OpenClash Config</Text>
+                    <Text style={styles.serviceDesc}>运行状态 · 插件设置 · 配置订阅 · 覆写设置</Text>
+                </View>
+                <Text style={styles.arrowIcon}>→</Text>
+            </TouchableOpacity>
+
 
             {/* We can add more services here easily later */}
 
