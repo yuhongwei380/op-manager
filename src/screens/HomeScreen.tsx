@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { getNodes, deleteNode } from '../storage';
 import { OpenWrtNode } from '../types';
 
 export default function HomeScreen({ navigation }: any) {
+    const insets = useSafeAreaInsets();
     const [nodes, setNodes] = useState<OpenWrtNode[]>([]);
 
     const loadNodes = async () => {
@@ -52,7 +54,7 @@ export default function HomeScreen({ navigation }: any) {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text style={styles.headerTitle}>My OpenWrt Nodes</Text>
+            <Text style={[styles.headerTitle, { paddingTop: insets.top + 16 }]}>My OpenWrt Nodes</Text>
             <FlatList
                 data={nodes}
                 keyExtractor={item => item.id}
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
         fontWeight: '700',
         color: '#111827',
         paddingHorizontal: 20,
-        paddingTop: 20,
+        paddingTop: 16,
         paddingBottom: 10,
     },
     list: {

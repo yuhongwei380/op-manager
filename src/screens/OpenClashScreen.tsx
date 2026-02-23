@@ -6,8 +6,32 @@ import { OpenWrtNode } from '../types';
 export default function OpenClashScreen({ route }: any) {
     const { node } = route.params as { node: OpenWrtNode };
 
-    // Auto-login injection script for LuCI login page (in case Yacd redirects there)
-    const autoLoginScript = `
+    const apiBaseUrl = `${node.protocol}://${node.host}:9090`;
+
+    // Injected BEFORE page content loads so Yacd reads the correct backend from localStorage
+    // Yacd stores its config under the key 'yacd-setting' in localStorage
+    // We forcefully overwrite it with the correct router IP before Yacd initialises
+    const preloadScript = `
+        (function() {
+            try {
+                var setting = {
+                    clashAPIURL: ${JSON.stringify(apiBaseUrl)},
+                    clashAPISecret: '',
+                    selectedChartStyle: 0,
+                    latencyTestURL: 'http://www.gstatic.com/generate_204',
+                    autoCloseOldConns: false,
+                    useFakeIPDB: false,
+                    logLevel: 'info',
+                    theme: 'dark'
+                };
+                localStorage.setItem('yacd-setting', JSON.stringify(setting));
+            } catch(e) {}
+        })();
+        true;
+    `;
+
+    // Also run after load for LuCI auto-login fallback
+    const postLoadScript = `
         (function() {
             function tryAutoLogin() {
                 var userField = document.querySelector('input[name="luci_username"]');
@@ -30,8 +54,7 @@ export default function OpenClashScreen({ route }: any) {
         true;
     `;
 
-    // Pass hostname and port so Yacd auto-connects to the correct router (not 127.0.0.1)
-    const dashboardUrl = `${node.protocol}://${node.host}:9090/ui/yacd/?hostname=${node.host}&port=9090`;
+    const dashboardUrl = `${node.protocol}://${node.host}:9090/ui/yacd/`;
 
     return (
         <View style={styles.container}>
@@ -42,7 +65,8 @@ export default function OpenClashScreen({ route }: any) {
                 mixedContentMode="always"
                 javaScriptEnabled={true}
                 domStorageEnabled={true}
-                injectedJavaScript={autoLoginScript}
+                injectedJavaScriptBeforeContentLoaded={preloadScript}
+                injectedJavaScript={postLoadScript}
                 onMessage={() => { }}
                 onError={(syntheticEvent) => {
                     const { nativeEvent } = syntheticEvent;
