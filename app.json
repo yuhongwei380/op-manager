@@ -4,11 +4,11 @@
     "slug": "openwrt-manager",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/openwrt_logo.png",
+    "icon": "./assets/adaptive_icon_fg.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/openwrt_logo.png",
+      "image": "./assets/adaptive_icon_fg.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,8 +20,8 @@
       "package": "com.openwrt.manager",
       "versionCode": 1,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/openwrt_logo.png",
-        "backgroundColor": "#3B82F6"
+        "foregroundImage": "./assets/adaptive_icon_fg.png",
+        "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
