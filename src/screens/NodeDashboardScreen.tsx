@@ -6,7 +6,6 @@ import { OpenWrtNode, NodeStats } from '../types';
 export default function NodeDashboardScreen({ route, navigation }: any) {
     const { node } = route.params as { node: OpenWrtNode };
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
     const [stats, setStats] = useState<NodeStats | null>(null);
 
     useEffect(() => {
@@ -15,27 +14,20 @@ export default function NodeDashboardScreen({ route, navigation }: any) {
     }, []);
 
     const loadStats = async () => {
+        setLoading(true);
         try {
-            setLoading(true);
-            setError('');
-            // In a real OpenWrt environment this auth handles tokens
             const token = await authenticate(node);
             const data = await fetchSystemStats(node, token);
             setStats(data);
         } catch (e: any) {
-            // In dev environment or mock situation, just show fallback dummy data so user can see it works
-            console.warn("Using simulated data, actual connection failed:", e);
-            setStats({
-                cpu: 25.4,
-                memory: { total: 1024 * 1024 * 512, available: 1024 * 1024 * 256 },
-                load: [1.2, 0.8, 0.5]
-            });
-            // Uncomment this if you want real error fallback:
-            // setError('Failed to connect to router. Please check IP and credentials.');
+            // Silently fail - dashboard still shows node info and OpenClash entry even without stats
+            console.warn('Stats load skipped (router API unavailable):', e?.message);
+            setStats(null);
         } finally {
             setLoading(false);
         }
     };
+
 
     const formatBytes = (bytes: number) => {
         if (bytes === 0) return '0 B';
@@ -54,16 +46,6 @@ export default function NodeDashboardScreen({ route, navigation }: any) {
         );
     }
 
-    if (error) {
-        return (
-            <View style={styles.centerContainer}>
-                <Text style={styles.errorText}>{error}</Text>
-                <TouchableOpacity style={styles.retryBtn} onPress={loadStats}>
-                    <Text style={styles.retryText}>Retry</Text>
-                </TouchableOpacity>
-            </View>
-        );
-    }
 
     return (
         <ScrollView style={styles.container}>
@@ -79,23 +61,29 @@ export default function NodeDashboardScreen({ route, navigation }: any) {
             <View style={styles.statsGrid}>
                 <View style={styles.statBox}>
                     <Text style={styles.statLabel}>CPU Usage</Text>
-                    <Text style={styles.statValue}>{stats?.cpu || 0}%</Text>
+                    <Text style={styles.statValue}>{stats ? `${stats.cpu}%` : 'N/A'}</Text>
                 </View>
 
                 <View style={styles.statBox}>
                     <Text style={styles.statLabel}>Memory Free</Text>
                     <Text style={styles.statValue}>
-                        {stats?.memory ? formatBytes(stats.memory.available) : '0 MB'}
+                        {stats?.memory ? formatBytes(stats.memory.available) : 'N/A'}
                     </Text>
                 </View>
 
                 <View style={[styles.statBox, { width: '100%', marginTop: 16 }]}>
                     <Text style={styles.statLabel}>System Load (1m, 5m, 15m)</Text>
                     <Text style={styles.statValue}>
-                        {stats?.load?.[0]} / {stats?.load?.[1]} / {stats?.load?.[2]}
+                        {stats ? `${stats.load[0]} / ${stats.load[1]} / ${stats.load[2]}` : 'N/A'}
                     </Text>
                 </View>
             </View>
+
+            {!stats && (
+                <Text style={styles.apiHint}>
+                    ⚠️ Router statistics unavailable. The ubus/LuCI API may require additional packages or credentials.
+                </Text>
+            )}
 
             {/* Services Section */}
             <Text style={styles.sectionTitle}>Services</Text>
@@ -106,7 +94,7 @@ export default function NodeDashboardScreen({ route, navigation }: any) {
             >
                 <View>
                     <Text style={styles.serviceName}>OpenClash Dashboard</Text>
-                    <Text style={styles.serviceDesc}>Manage proxies, rules & nodes via Zashboard</Text>
+                    <Text style={styles.serviceDesc}>Manage proxies, rules & nodes via Yacd</Text>
                 </View>
                 <Text style={styles.arrowIcon}>→</Text>
             </TouchableOpacity>
@@ -139,4 +127,5 @@ const styles = StyleSheet.create({
     serviceName: { fontSize: 16, fontWeight: '600', color: '#1F2937' },
     serviceDesc: { fontSize: 12, color: '#6B7280', marginTop: 4 },
     arrowIcon: { fontSize: 24, color: '#9CA3AF' },
+    apiHint: { fontSize: 13, color: '#F59E0B', backgroundColor: '#FFFBEB', borderRadius: 10, padding: 12, marginBottom: 20, lineHeight: 20 },
 });
