@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import HomeScreen from './src/screens/HomeScreen';
 import AddNodeScreen from './src/screens/AddNodeScreen';
-// Temporarily disabled until we complete them
 import NodeDashboardScreen from './src/screens/NodeDashboardScreen';
 import OpenClashScreen from './src/screens/OpenClashScreen';
+import OpenClashConfigScreen from './src/screens/OpenClashConfigScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +41,11 @@ export default function App() {
           name="OpenClash"
           component={OpenClashScreen}
           options={{ title: 'OpenClash Panel', headerBackTitle: 'Overview' }}
+        />
+        <Stack.Screen
+          name="OpenClashConfig"
+          component={OpenClashConfigScreen}
+          options={{ title: 'OpenClash Config', headerBackTitle: 'Overview' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
