@@ -17,19 +17,22 @@ fi
 
 echo "📦 获取到版本号: v$VERSION"
 
-echo "▶️ [1/4] 安装依赖 (npm install)..."
+echo "🧹 [1/5] 清理旧版本 APK 产物..."
+rm -f op-manager-*.apk
+
+echo "▶️ [2/5] 安装依赖 (npm install)..."
 npm install
 
-echo "▶️ [2/4] 生成原生目录 (expo prebuild)..."
+echo "▶️ [3/5] 生成原生目录 (expo prebuild)..."
 CI=1 npx expo prebuild --platform android --clean
 
-echo "▶️ [3/4] 编译 Release APK..."
+echo "▶️ [4/5] 编译 Release APK..."
 cd android
 chmod +x ./gradlew
 ./gradlew assembleRelease
 cd ..
 
-echo "▶️ [4/4] 提取并重命名 APK 文件..."
+echo "▶️ [5/5] 提取并重命名 APK 文件..."
 APK_PATH="android/app/build/outputs/apk/release/app-release.apk"
 
 if [ -f "$APK_PATH" ]; then
@@ -48,8 +51,10 @@ else
     fi
 fi
 
-echo "🧹 正在清理原生目录 (android) 和依赖目录 (node_modules)..."
+echo "🧹 正在清理原生目录和依赖目录..."
 rm -rf android
 rm -rf node_modules
+rm -rf .expo
+rm -f expo-env.d.ts
 
 echo "🎉 打包完成！"

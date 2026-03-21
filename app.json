@@ -2,7 +2,7 @@
   "expo": {
     "name": "OpenWrt Manager",
     "slug": "openwrt-manager",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/adaptive_icon_fg.png",
     "userInterfaceStyle": "light",

@@ -9,13 +9,20 @@ export default function OpenClashScreen({ route }: any) {
     const apiBaseUrl = `${node.protocol}://${node.host}:9090`;
 
     // Injected BEFORE page content loads.
-    // Write all known yacd localStorage key variants so whichever version of yacd
-    // is installed will pick up the correct backend URL on first render.
+    // Write all known localStorage key variants so zashboard / metacubexd
+    // will pick up the correct backend URL on first render.
     const preloadScript = `
         (function() {
             try {
                 var url = ${JSON.stringify(apiBaseUrl)};
-                // yacd ≥ 0.3.x stores a JSON object under 'yacd-setting'
+                // zashboard / metacubexd store backend URLs in this key
+                var backends = [url];
+                localStorage.setItem('backendList', JSON.stringify(backends));
+                localStorage.setItem('selectedBackend', url);
+                // metacubexd also reads these keys
+                localStorage.setItem('selectedClashAPIURL', url);
+                localStorage.setItem('clashAPIConfig', JSON.stringify({ clashAPIURL: url, clashAPISecret: '' }));
+                // yacd legacy keys (kept for compatibility)
                 var setting = {
                     clashAPIURL: url,
                     clashAPISecret: '',
@@ -27,11 +34,7 @@ export default function OpenClashScreen({ route }: any) {
                     theme: 'dark'
                 };
                 localStorage.setItem('yacd-setting', JSON.stringify(setting));
-                // Some older yacd builds store the URL as a plain string
                 localStorage.setItem('clashAPIURL', url);
-                // metacubexd / razord variants
-                localStorage.setItem('selectedClashAPIURL', url);
-                localStorage.setItem('clashAPIConfig', JSON.stringify({ clashAPIURL: url, clashAPISecret: '' }));
             } catch(e) {}
         })();
         true;
@@ -131,7 +134,7 @@ export default function OpenClashScreen({ route }: any) {
         true;
     `;
 
-    const dashboardUrl = `${node.protocol}://${node.host}:9090/ui/yacd/`;
+    const dashboardUrl = `${node.protocol}://${node.host}:9090/ui/zashboard/#/proxies`;
 
     return (
         <View style={styles.container}>
