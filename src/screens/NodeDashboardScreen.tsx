@@ -94,7 +94,7 @@ export default function NodeDashboardScreen({ route, navigation }: any) {
             >
                 <View>
                     <Text style={styles.serviceName}>🌐 OpenClash Dashboard</Text>
-                    <Text style={styles.serviceDesc}>Manage proxies, rules & nodes via Yacd</Text>
+                    <Text style={styles.serviceDesc}>Manage proxies, rules & nodes via Zashboard</Text>
                 </View>
                 <Text style={styles.arrowIcon}>→</Text>
             </TouchableOpacity>

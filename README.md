@@ -8,7 +8,7 @@
 
 - ✅ **节点管理** — 添加、编辑、删除 OpenWrt 连接（支持 HTTP/HTTPS，持久化本地保存）
 - ✅ **主机概览** — 查看 CPU 使用率、内存剩余、系统负载（1m/5m/15m）
-- ✅ **OpenClash Dashboard** — 内嵌 Yacd 面板，管理代理节点和规则
+- ✅ **OpenClash Dashboard** — 内嵌 Zashboard 面板，管理代理节点和规则
 - ✅ **OpenClash Config** — 内嵌 LuCI OpenClash 配置页面，支持运行状态、配置订阅、覆写设置等
 - ✅ **自动登录** — 打开 LuCI 配置页时，使用保存的账号密码自动填充并提交登录表单
 
@@ -87,61 +87,12 @@ npx expo start -c
 
 ## 构建正式 Android APK
 
-> **说明**：以下两种方式均可产出可直接安装到安卓手机的 `.apk` 文件。
+> **说明**：以下方式可产出可直接安装到安卓手机的 `.apk` 文件。
 
 ---
 
-### 方案 A：☁️ EAS 云端构建（推荐，无需 Android SDK）
 
-**优点**：无需安装 Android Studio，Expo 提供免费云端编译机器，约 5~15 分钟完成。
-
-#### 前置条件
-
-- 注册免费 [Expo 账号](https://expo.dev/signup)（支持 GitHub 一键登录）
-
-#### 构建步骤
-
-```bash
-# 1. 全局安装 EAS CLI
-npm install -g eas-cli
-
-# 2. 登录 Expo 账号
-eas login
-
-# 3. 进入项目目录
-cd ~/Desktop/openwrt
-
-# 4. 关联项目（首次执行，会在 app.json 写入 projectId）
-eas build:configure
-
-# 5. 开始云端构建 APK（使用 preview 配置，输出 .apk 格式）
-eas build -p android --profile preview
-```
-
-#### 获取 APK
-
-- 构建完成后，终端会显示一个**下载链接和二维码**
-- 也可访问 [expo.dev](https://expo.dev) → 登录账号 → 选择项目 → Builds 查看
-- 用安卓手机**直接扫码下载安装**，或在 Mac 下载后用 adb/数据线传输
-
-#### EAS 配置说明（eas.json）
-
-```json
-{
-  "build": {
-    "preview": {
-      "android": {
-        "buildType": "apk"   // 输出 .apk 格式（而非 .aab）
-      },
-      "distribution": "internal"
-    }
-  }
-}
-```
-
----
-
-### 方案 B：🖥️ 本地构建（完全离线，需安装 Android Studio）
+### 方案 A：🖥️ 本地构建（完全离线，需安装 Android Studio）
 
 **优点**：不依赖 Expo 服务器，适合频繁迭代或内网环境。
 
